@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Timeline - VoceDM Consulting</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Nunito Sans', sans-serif;
+            background: linear-gradient(135deg, #001f3f 0%, #003d7a 100%);
+            padding: 40px 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(90deg, #0052CC 0%, #004EAA 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 32px;
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-bottom: 20px;
+        }
+
+        .summary {
+            display: flex;
+            justify-content: space-around;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-top: 30px;
+        }
+
+        .summary-item {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 12px 24px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .summary-item strong {
+            display: block;
+            font-size: 24px;
+            margin-bottom: 4px;
+        }
+
+        .summary-item span {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+
+        .alert {
+            background: #FFF3CD;
+            border-left: 4px solid #FFC107;
+            padding: 16px;
+            margin-bottom: 30px;
+            border-radius: 8px;
+            font-size: 12px;
+            line-height: 1.6;
+            color: #856404;
+        }
+
+        .alert strong {
+            color: #533f03;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .timeline {
+            position: relative;
+            padding: 20px 0;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(180deg, #0052CC 0%, #00D9FF 100%);
+            top: 0;
+        }
+
+        .timeline-item {
+            margin-bottom: 60px;
+            position: relative;
+        }
+
+        .timeline-item:nth-child(odd) .timeline-content {
+            margin-left: 0;
+            margin-right: 52%;
+            text-align: left;
+        }
+
+        .timeline-item:nth-child(even) .timeline-content {
+            margin-left: 52%;
+            margin-right: 0;
+            text-align: left;
+        }
+
+        .timeline-marker {
+            position: absolute;
+            left: 50%;
+            top: 0;
+            transform: translateX(-50%);
+            width: 16px;
+            height: 16px;
+            background: white;
+            border: 4px solid #0052CC;
+            border-radius: 50%;
+            z-index: 10;
+        }
+
+        .timeline-content {
+            background: #f8f9fa;
+            padding: 24px;
+            border-radius: 8px;
+            border-left: 4px solid #0052CC;
+            transition: all 0.3s ease;
+        }
+
+        .timeline-item:nth-child(even) .timeline-content {
+            border-left: 4px solid #00D9FF;
+        }
+
+        .timeline-content:hover {
+            box-shadow: 0 4px 16px rgba(0, 82, 204, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .timeline-phase {
+            font-size: 10px;
+            font-weight: 700;
+            color: #0052CC;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 6px;
+        }
+
+        .timeline-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #001f3f;
+            margin-bottom: 8px;
+        }
+
+        .timeline-meta {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+
+        .meta-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .meta-label {
+            font-size: 10px;
+            font-weight: 700;
+            color: #6c757d;
+            text-transform: uppercase;
+        }
+
+        .meta-value {
+            font-size: 12px;
+            color: #495057;
+            font-weight: 600;
+        }
+
+        .timeline-hours {
+            background: #E3F2FD;
+            color: #0052CC;
+            display: inline-block;
+            padding: 8px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .timeline-description {
+            font-size: 13px;
+            color: #495057;
+            line-height: 1.6;
+            margin: 12px 0;
+        }
+
+        .section {
+            margin-top: 16px;
+            padding-top: 12px;
+            border-top: 1px solid #dee2e6;
+        }
+
+        .section-title {
+            font-size: 11px;
+            font-weight: 700;
+            color: #0052CC;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .ritos, .papeis, .entregas {
+            font-size: 12px;
+            line-height: 1.5;
+            color: #495057;
+        }
+
+        .ritos {
+            color: #6c28d9;
+            font-weight: 500;
+        }
+
+        .papeis {
+            color: #ea580c;
+            font-weight: 500;
+        }
+
+        .entregas {
+            color: #28a745;
+            font-weight: 500;
+        }
+
+        .ritos::before,
+        .papeis::before,
+        .entregas::before {
+            content: '• ';
+            margin-right: 6px;
+        }
+
+        .month-header {
+            background: linear-gradient(90deg, #E3F2FD 0%, #BBE5FF 100%);
+            padding: 16px 20px;
+            margin: 30px 0 20px 0;
+            border-radius: 8px;
+            border-left: 4px solid #0052CC;
+            font-weight: 700;
+            color: #001f3f;
+            font-size: 14px;
+        }
+
+        .month-header .hours-total {
+            background: #0052CC;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            display: inline-block;
+            margin-left: 10px;
+        }
+
+        .footer {
+            background: #f8f9fa;
+            padding: 30px 40px;
+            border-top: 1px solid #dee2e6;
+        }
+
+        .footer-section {
+            margin-bottom: 24px;
+        }
+
+        .footer-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .footer h3 {
+            font-size: 12px;
+            font-weight: 700;
+            color: #001f3f;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .footer-content {
+            font-size: 12px;
+            color: #495057;
+            line-height: 1.6;
+        }
+
+        .legend {
+            display: flex;
+            justify-content: flex-start;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-top: 12px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 11px;
+        }
+
+        .legend-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 2px;
+        }
+
+        .important-note {
+            background: #E8F4F8;
+            border-left: 4px solid #0052CC;
+            padding: 12px;
+            margin-top: 12px;
+            border-radius: 4px;
+            font-size: 11px;
+            color: #003d7a;
+            line-height: 1.5;
+        }
+
+        .important-note strong {
+            color: #001f3f;
+        }
+
+        @media (max-width: 1024px) {
+            .timeline::before {
+                left: 10px;
+            }
+
+            .timeline-marker {
+                left: 10px;
+            }
+
+            .timeline-item:nth-child(odd) .timeline-content,
+            .timeline-item:nth-child(even) .timeline-content {
+                margin-left: 50px;
+                margin-right: 0;
+                text-align: left;
+            }
+
+            .timeline-item:nth-child(even) .timeline-content {
+                border-left: 4px solid #0052CC;
+                border-right: none;
+            }
+
+            .header h1 {
+                font-size: 24px;
+            }
+
+            .summary {
+                flex-direction: column;
+                gap: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>VoceDM - Timeline de Consulting</h1>
+            <p>Assessment Contatos Inteligentes & Estratégia de Evolução</p>
+            <div class="summary">
+                <div class="summary-item">
+                    <strong>600h</strong>
+                    <span>Total de Horas</span>
+                </div>
+                <div class="summary-item">
+                    <strong>2 meses</strong>
+                    <span>Duração</span>
+                </div>
+                <div class="summary-item">
+                    <strong>300h/mês</strong>
+                    <span>Não cumulativas</span>
+                </div>
+                <div class="summary-item">
+                    <strong>Escopo aberto</strong>
+                    <span>Priorização dinâmica</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="content">
+            <div class="alert">
+                <strong>⚠️ Modelo de Alocação:</strong> 300 horas/mês <strong>não cumulativas</strong>. Todas as reuniões, standups, workshops e atividades administrativas são contabilizadas. As atividades e entregas serão priorizadas conforme as horas disponíveis em cada mês. Encontros serão 100% online, gravados e compartilhados como material de apoio (paper delivery).
+            </div>
+
+            <div class="timeline">
+                <!-- MÊS 1 -->
+                <div class="month-header">
+                    📅 MÊS 1 - Discover & Structure
+                    <div class="hours-total">~300h</div>
+                </div>
+
+                <!-- Kickoff -->
+                <div class="timeline-item">
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-phase">Semana 1</div>
+                        <div class="timeline-title">Kickoff & Mobilização</div>
+                        <div class="timeline-meta">
+                            <div class="meta-item">
+                                <div class="meta-label">Período</div>
+                                <div class="meta-value">Início do projeto + 5 dias</div>
+                            </div>
+                            <div class="meta-item">
+                                <span class="timeline-hours">20-30h</span>
+                            </div>
+                        </div>
+                        <div class="timeline-description">
+                            Estabelecimento de equipes, definição de rituais de trabalho, alinhamento de expectativas, definição de comunicação e configuração de acessos técnicos necessários.
+                        </div>
+
+                        <div class="section">
+                            <div class="section-title">🔄 Ritos Sugeridos</div>
+                            <div class="ritos">Kickoff online (2-3h, gravado) | Definição de standups diários (15min cada)</div>
+                        </div>
+
+                        <div class="section">
+                            <div class="section-title">👥 Papéis do Cliente</div>
+                            <div class="papeis">Product Owner ou Especialista de Negócio | Desenvolvedor | TI/Infraestrutura (para provisão de acessos)</div>
+                        </div>
+
+                        <div class="section">
+                            <div class="section-title">✓ Entregas Esperadas</div>
+                            <div class="entregas">Squad integrada | Ritmos definidos | Acessos provisionados | Roadmap de comunicação | Recording disponibilizado</div>
+                        </div>
+
+                        <div class="important-note">
+                            <strong>Contabilização:</strong> Kickoff (3h) + Daily standups × 5 dias (1,25h) = ~4,25h contabilizadas nesta semana
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Discovery & Platform Diagnostics -->
+                <div class="timeline-item">
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-phase">Semanas 2-3</div>
+                        <div class="timeline-title">Discovery & Diagnóstico de Plataforma</div>
+                        <div class="timeline-meta">
+                            <div class="meta-item">
+                                <div class="meta-label">Período</div>
+                                <div class="meta-value">Dias 6-20</div>
+                            </div>
+                            <div class="meta-item">
+                                <span class="timeline-hours">90-110h</span>
+                            </div>
+                        </div>
+                        <div class="timeline-description">
+                            Mapeamento completo dos contatos inteligentes atuais, entendimento de jornadas conversacionais, análise de regras de negócio, levantamento de oportunidades. <strong>Inclui diagnóstico de consumo e aproveitamento da plataforma Blip (score de utilização, features subutilizadas, oportunidades de expansão).</strong>
+                        </div>
+
+                        <div class="section">
+                            <div class="section-title">🔄 Ritos Sugeridos</div>
+                            <div class="ritos">Planning de discovery online (1h, gravado) | Reviews diários com especialista de negócio (30min, gravado) | Workshop de jornadas (2-3h, gravado) | Apresentação de findings (2h, gravado)</div>
+                        </div>
+
+                        <div class="section">
+                            <div class="section-title">👥 Papéis do Cliente</div>
+                            <div class="papeis">Especialista de Negócio/Product Owner (fundamental para validar fluxos) | Desenvolvedor (suporte técnico e acessos) | Usuários finais (entrevistas opcionais)</div>
+                        </div>
+
+                        <div class="section">
+                            <div class="section-title">✓ Entregas Esperadas</div>
+                            <div class="entregas">Inventário de bots | Jornadas documentadas | Gap analysis | Score de utilização da plataforma | Matriz de oportunidades | Recordings disponibilizados</div>
+                        </div>
+
+                        <div class="important-note">
+                            <strong>Contabilização:</strong> Todas as reuniões (planning, reviews, workshops, apresentação), daily standups (10 dias × 15min) e trabalho de mapeamento = ~95-110h
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Technical Assessment -->
+                <div class="timeline-item">
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-phase">Semanas 4-5</div>
+                        <div class="timeline-title">Análise Técnica & Arquitetura</div>
+                        <div class="timeline-meta">
+                            <div class="meta-item">
+                                <div class="meta-label">Período</div>
+                                <div class="meta-value">Dias 21-35</div>
+                            </div>
+                            <div class="meta-item">
+                                <span class="timeline-hours">100-110h</span>
+                            </div>
+                        </div>
+                        <div class="timeline-description">
+                            Avaliação técnica detalhada de arquitetura, integrações de API, performance, segurança, aderência às boas práticas Blip e Design System. Identificação de oportunidades de otimização e modernização.
+                        </div>
+
+                        <div class="section">
+                            <div class="section-title">🔄 Ritos Sugeridos</div>
+                            <div class="ritos">Planning técnico online (1h, gravado) | Alinhamentos técnicos semanais com desenvolvedor (1h cada, gravado) | Code review colaborativo (1-2h, gravado) | Apresentação de recomendações (2h, gravado)</div>
+                        </div>
+
+                        <div class="section">
+                            <div class="section-title">👥 Papéis do Cliente</div>
+                            <div class="papeis">Desenvolvedor (central nesta fase - pair programming recomendado) | TI/Infraestrutura | Especialista de Negócio (validações pontuais)</div>
+                        </div>
+
+                        <div class="section">
+                            <div class="section-title">✓ Entregas Esperadas</div>
+                            <div class="entregas">Relatório técnico detalhado | Matriz de melhorias categorizadas | Riscos e dependências | Recomendações de arquitetura | Plano de refatoração | Recordings disponibilizados</div>
+                        </div>
+
+                        <div class="important-note">
+                            <strong>Contabilização:</strong> Análise técnica, reuniões de alinhamento (2 × 1h), code reviews, daily standups (10 dias × 15min) e documentação = ~100-110h
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Roadmap Definition -->
+                <div class="timeline-item">
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-phase">Semana 6</div>
+                        <div class="timeline-title">Roadmap Estratégico & Priorização</div>
+                        <div class="timeline-meta">
+                            <div class="meta-item">
+                                <div class="meta-label">Período</div>
+                                <div class="meta-value">Dias 36-42</div>
+                            </div>
+                            <div class="meta-item">
+                                <span class="timeline-hours">40-50h</span>
+                            </div>
+                        </div>
+                        <div class="timeline-description">
+                            Co-criação de roadmap estratégico 6-12 meses com o cliente. Priorização de iniciativas conforme impacto de negócio, complexidade técnica e capacidade de entrega. Definição clara de quick wins com base nas horas disponíveis do Mês 2.
+                        </div>
+
+                        <div class="section">
+                            <div class="section-title">🔄 Ritos Sugeridos</div>
+                            <div class="ritos">Workshop de priorização online (3-4h, gravado) | Alinhamento executivo (1h, gravado) | Refinement de roadmap (2h, gravado) | Daily standups</div>
+                        </div>
+
+                        <div class="section">
+                            <div class="section-title">👥 Papéis do Cliente</div>
+                            <div class="papeis">Especialista de Negócio/Product Owner | Desenvolvedor | Liderança (para aprovação e commitment de recursos)</div>
+                        </div>
+
+                        <div class="section">
+                            <div class="section-title">✓ Entregas Esperadas</div>
+                            <div class="entregas">Roadmap 6-12 meses | Quick wins priorizados para Mês 2 | KPIs de sucesso | Plano de implementação | Definição de fases | Recordings disponibilizados</div>
+                        </div>
+
+                        <div class="important-note">
+                            <strong>Contabilização:</strong> Workshop (4h) + alinhamento executivo (1h) + refinements (2h) + daily standups (5 dias × 15min) = ~44h
+                        </div>
+                    </div>
+                </div>
+
+                <!-- MÊS 2 -->
+                <div class="month-header">
+                    📅 MÊS 2 - Implement & Measure
+                    <div class="hours-total">~300h</div>
+                </div>
+
+                <!-- Quick Wins Development -->
+                <div class="timeline-item">
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-phase">Semanas 7-9</div>
+                        <div class="timeline-title">Desenvolvimento de Quick Wins</div>
+                        <div class="timeline-meta">
+                            <div class="meta-item">
+                                <div class="meta-label">Período</div>
+                                <div class="meta-value">Dias 43-55</div>
+                            </div>
+                            <div class="meta-item">
+                                <span class="timeline-hours">220-240h</span>
+                            </div>
+                        </div>
+                        <div class="timeline-description">
+                            Implementação ágil de melhorias prioritárias identificadas no assessment. Desenvolvimento de novos fluxos, otimização de jornadas existentes, integração de APIs conforme roadmap priorizado. <strong>Escopo será ajustado dinamicamente conforme horas disponíveis.</strong>
+                        </div>
+
+                        <div class="section">
+                            <div class="section-title">🔄 Ritos Sugeridos</div>
+                            <div class="ritos">Sprint planning online (1h, gravado) | Daily standups (15min, gravado) | Sprint review (1-2h, gravado) | Sprint retro (1h, gravado) | Validação com PO (1-2h, gravado)</div>
+                        </div>
+
+                        <div class="section">
+                            <div class="section-title">👥 Papéis do Cliente</div>
+                            <div class="papeis">Desenvolvedor (pair programming com nosso time recomendado) | Especialista de Negócio (testes e validação contínua) | Testador (QA, se disponível)</div>
+                        </div>
+
+                        <div class="section">
+                            <div class="section-title">✓ Entregas Esperadas</div>
+                            <div class="entregas">Bots otimizados em produção | Novas funcionalidades testadas | Integrações implementadas | Documentação de implementação | Incremento de valor de negócio | Recordings de sprints | Material de referência</div>
+                        </div>
+
+                        <div class="important-note">
+                            <strong>Contabilização:</strong> Planning (1h) + sprints (3 semanas) com daily standups (15 × 15min = 3,75h), reviews (3 × 1,5h = 4,5h), retros (3 × 1h = 3h), validações com PO (6h) + desenvolvimento = ~220-240h
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Handoff & Encerramento -->
+                <div class="timeline-item">
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-phase">Semana 10 (Final)</div>
+                        <div class="timeline-title">Handoff & Encerramento</div>
+                        <div class="timeline-meta">
+                            <div class="meta-item">
+                                <div class="meta-label">Período</div>
+                                <div class="meta-value">Dias 56-60</div>
+                            </div>
+                            <div class="meta-item">
+                                <span class="timeline-hours">40-60h</span>
+                            </div>
+                        </div>
+                        <div class="timeline-description">
+                            Documentação final completa, treinamento hands-on do time cliente, transição de conhecimento, definição do modelo de sustentação contínua e planejamento das próximas fases.
+                        </div>
+
+                        <div class="section">
+                            <div class="section-title">🔄 Ritos Sugeridos</div>
+                            <div class="ritos">Knowledge transfer session online (3-4h, gravado) | Treinamento prático (3-4h, gravado) | Review final (2h, gravado) | Planning para sustentação (1-2h, gravado)</div>
+                        </div>
+
+                        <div class="section">
+                            <div class="section-title">👥 Papéis do Cliente</div>
+                            <div class="papeis">Desenvolvedor (treinamento técnico) | Especialista de Negócio (validação final) | Operações (preparação para sustentação)</div>
+                        </div>
+
+                        <div class="section">
+                            <div class="section-title">✓ Entregas Esperadas</div>
+                            <div class="entregas">Documentação técnica completa | Runbook de operações | Plano de sustentação | Time capacitado | Relatório de impacto | Proposta para próxima fase | Todos os recordings e materials | Acervo de implementação completo</div>
+                        </div>
+
+                        <div class="important-note">
+                            <strong>Contabilização:</strong> Knowledge transfer (4h) + Treinamento (4h) + Review final (2h) + Planning sustentação (1,5h) + documentação + daily standups (5 dias × 15min = 1,25h) = ~45-50h
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <div class="footer-section">
+                <h3>📊 Resumo de Distribuição de Horas</h3>
+                <div class="footer-content">
+                    <div class="legend">
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #E3F2FD;"></div>
+                            <span><strong>Mês 1:</strong> 300h (Discover + Structure + Plan)</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #BBE5FF;"></div>
+                            <span><strong>Mês 2:</strong> 300h (Implement + Deliver)</span>
+                        </div>
+                    </div>
+                    <p style="margin-top: 12px; font-size: 11px; color: #666;">
+                        <strong>Total contratado: 600h</strong> | <strong>Horas não cumulativas:</strong> saldo não utilizado em cada mês não se transfere para o mês seguinte.
+                    </p>
+                </div>
+            </div>
+
+            <div class="footer-section">
+                <h3>⏱️ Contabilização de Horas</h3>
+                <div class="footer-content">
+                    <strong>TODA e QUALQUER hora é contabilizada:</strong> reuniões, standups, workshops, alinhamentos, pair programming, code reviews, testes, documentação e atividades administrativas. A priorização de atividades e entregas será feita dinamicamente conforme as horas disponíveis em cada mês. Caso identifiquemos que não haverá tempo para todos os quick wins priorizados, comunicaremos e faremos reprioritização em conjunto.
+                </div>
+            </div>
+
+            <div class="footer-section">
+                <h3>🔌 Escopo de Desenvolvimento de APIs</h3>
+                <div class="footer-content">
+                    <strong>Responsabilidade do cliente:</strong> Desenvolvimento de APIs backend e serviços de negócio. <strong>Responsabilidade Blip:</strong> Desenvolvimento de APIs intermediárias (integração, middleware, orquestração) para conectar plataforma Blip aos sistemas do cliente, <strong>desde que caiba na alocação de horas prevista</strong>. Caso identifiquemos que desenvolvimento de APIs consumiria mais horas que o disponível, comunicaremos e proporemos alternativas (contratação de horas adicionais ou ajuste de escopo).
+                </div>
+            </div>
+
+            <div class="footer-section">
+                <h3>📹 Modelo de Delivery & Gravações</h3>
+                <div class="footer-content">
+                    <strong>100% online.</strong> Todos os encontros (kickoff, workshops, reviews, alinhamentos técnicos) serão gravados e compartilhados como material de apoio (paper delivery) para consulta futura, treinamento de novos membros do time ou referência. Gravações ficarão disponíveis no repositório do projeto por pelo menos 6 meses.
+                </div>
+            </div>
+
+            <div class="footer-section">
+                <h3>🎯 Score de Utilização da Plataforma</h3>
+                <div class="footer-content">
+                    Durante o Discovery & Diagnóstico (Semanas 2-3), realizaremos análise completa de consumo da plataforma Blip incluindo: volume de contatos, channels utilizados, features ativas/subutilizadas, performance de bots, comportamento de usuários finais. Esta análise resultará em um <strong>score de aproveitamento</strong> que servirá como baseline para medir impacto dos quick wins implementados no Mês 2.
+                </div>
+            </div>
+
+            <div class="footer-section">
+                <h3>📝 Próximos Passos</h3>
+                <div class="footer-content">
+                    1. Aceite da proposta | 2. Agendamento do Kickoff | 3. Provisão de acessos técnicos | 4. Indicação de papéis do cliente para cada fase | 5. Configuração de canal de comunicação e gravação de meetings
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
